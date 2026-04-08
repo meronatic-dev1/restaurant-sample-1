@@ -31,7 +31,7 @@ export default function CustomersPage() {
 
         getAnalyticsDashboard(activeBranchId ?? undefined)
             .then(data => {
-                setCustomers(data.customerList);
+                setCustomers(data.customerList || []);
             })
             .catch(e => console.error('Failed to load customers', e))
             .finally(() => setLoading(false));

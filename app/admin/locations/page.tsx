@@ -318,7 +318,7 @@ export default function AdminLocationsPage() {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
                                     {[
                                         { icon: <MapPin size={12} />, text: loc.address },
-                                        { icon: <Clock size={12} />, text: formatHours(loc.openTime, loc.closeTime) },
+                                        { icon: <Clock size={12} />, text: formatHours(loc.openTime || null, loc.closeTime || null) },
                                     ].map((row, ri) => (
                                         <div key={ri} style={{ display: 'flex', alignItems: 'flex-start', gap: 9 }}>
                                             <div style={{
@@ -354,7 +354,7 @@ export default function AdminLocationsPage() {
                                     <div style={{ flex: 1, padding: '12px 0', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
                                         <div style={{ position: 'absolute', inset: 0, background: 'rgba(59,130,246,0.03)' }} />
                                         <p style={{ fontSize: 20, fontWeight: 900, color: '#3b82f6', margin: '0 0 2px', letterSpacing: '-0.04em', position: 'relative' }}>
-                                            AED {loc.revenueToday.toLocaleString()}
+                                            AED {(loc.revenueToday || 0).toLocaleString()}
                                         </p>
                                         <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.22)', margin: 0, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', position: 'relative' }}>
                                             Revenue Today

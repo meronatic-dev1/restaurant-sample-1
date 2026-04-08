@@ -17,9 +17,9 @@ export default function AdminCouponsPage() {
         discount: 0,
         isPercent: true,
         isActive: true,
-        usageLimit: '' as number | string,
-        minimumSpend: 0,
-        expiryDate: '',
+        maxUses: '' as number | string,
+        minOrder: 0,
+        expiresAt: '',
     });
 
     useEffect(() => {
@@ -39,7 +39,7 @@ export default function AdminCouponsPage() {
 
     const handleOpenCreate = () => {
         setEditingId(null);
-        setFormData({ code: '', discount: 0, isPercent: true, isActive: true, usageLimit: '', minimumSpend: 0, expiryDate: '' });
+        setFormData({ code: '', discount: 0, isPercent: true, isActive: true, maxUses: '', minOrder: 0, expiresAt: '' });
         setIsModalOpen(true);
     };
 
@@ -48,11 +48,11 @@ export default function AdminCouponsPage() {
         setFormData({
             code: c.code,
             discount: c.discount,
-            isPercent: c.isPercent,
+            isPercent: c.type === 'percentage',
             isActive: c.isActive,
-            usageLimit: c.usageLimit === null ? '' : c.usageLimit,
-            minimumSpend: c.minimumSpend,
-            expiryDate: c.expiryDate ? new Date(c.expiryDate).toISOString().slice(0, 16) : '',
+            maxUses: (c.maxUses === null || c.maxUses === undefined) ? '' : c.maxUses,
+            minOrder: c.minOrder || 0,
+            expiresAt: c.expiresAt ? new Date(c.expiresAt).toISOString().slice(0, 16) : '',
         });
         setIsModalOpen(true);
     };
@@ -74,11 +74,11 @@ export default function AdminCouponsPage() {
             const payload = {
                 code: formData.code.toUpperCase(),
                 discount: Number(formData.discount),
-                isPercent: formData.isPercent,
+                type: formData.isPercent ? 'percentage' : 'fixed',
                 isActive: formData.isActive,
-                usageLimit: formData.usageLimit === '' ? null : Number(formData.usageLimit),
-                minimumSpend: Number(formData.minimumSpend),
-                expiryDate: formData.expiryDate ? new Date(formData.expiryDate).toISOString() : null,
+                maxUses: formData.maxUses === '' ? undefined : Number(formData.maxUses),
+                minOrder: Number(formData.minOrder),
+                expiresAt: formData.expiresAt ? new Date(formData.expiresAt).toISOString() : undefined,
             };
 
             if (editingId) {
@@ -176,7 +176,7 @@ export default function AdminCouponsPage() {
                                     {c.code}
                                 </h3>
                                 <p style={{ margin: 0, fontSize: 14, color: '#4ade80', fontWeight: 600 }}>
-                                    {c.isPercent ? `${c.discount}% OFF` : `${c.discount} AED OFF`}
+                                    {c.type === 'percentage' ? `${c.discount}% OFF` : `${c.discount} AED OFF`}
                                 </p>
                             </div>
                         </div>
@@ -184,16 +184,16 @@ export default function AdminCouponsPage() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 20 }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>
                                 <span>Minimum Spend:</span>
-                                <span style={{ color: '#fff' }}>{c.minimumSpend > 0 ? `${c.minimumSpend} AED` : 'None'}</span>
+                                <span style={{ color: '#fff' }}>{(c.minOrder || 0) > 0 ? `${c.minOrder} AED` : 'None'}</span>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>
                                 <span>Usage limit:</span>
-                                <span style={{ color: '#fff' }}>{c.usageLimit || 'Unlimited'} ({c.usageCount} used)</span>
+                                <span style={{ color: '#fff' }}>{c.maxUses || 'Unlimited'} ({c.usedCount || 0} used)</span>
                             </div>
-                            {c.expiryDate && (
+                            {c.expiresAt && (
                                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>
                                     <span>Expires:</span>
-                                    <span style={{ color: '#fff' }}>{new Date(c.expiryDate).toLocaleDateString()}</span>
+                                    <span style={{ color: '#fff' }}>{new Date(c.expiresAt).toLocaleDateString()}</span>
                                 </div>
                             )}
                         </div>
@@ -247,20 +247,20 @@ export default function AdminCouponsPage() {
                                 </div>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                                     <label style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.5)' }}>MINIMUM SPEND (AED)</label>
-                                    <input type="number" min="0" value={formData.minimumSpend || ''} onChange={e => setFormData({ ...formData, minimumSpend: e.target.valueAsNumber })} placeholder="0" style={{ padding: '10px 14px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#fff', fontSize: 14 }} />
+                                    <input type="number" min="0" value={formData.minOrder || ''} onChange={e => setFormData({ ...formData, minOrder: e.target.valueAsNumber })} placeholder="0" style={{ padding: '10px 14px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#fff', fontSize: 14 }} />
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                                     <label style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.5)' }}>USAGE LIMIT</label>
-                                    <input type="number" min="1" value={formData.usageLimit} onChange={e => setFormData({ ...formData, usageLimit: e.target.value })} placeholder="Leave blank for unlimited" style={{ padding: '10px 14px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#fff', fontSize: 14 }} />
+                                    <input type="number" min="1" value={formData.maxUses} onChange={e => setFormData({ ...formData, maxUses: e.target.value })} placeholder="Leave blank for unlimited" style={{ padding: '10px 14px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#fff', fontSize: 14 }} />
                                 </div>
                             </div>
 
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                                 <label style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.5)' }}>EXPIRY DATE & TIME</label>
-                                <input type="datetime-local" value={formData.expiryDate} onChange={e => setFormData({ ...formData, expiryDate: e.target.value })} style={{ padding: '10px 14px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#fff', fontSize: 14 }} />
+                                <input type="datetime-local" value={formData.expiresAt} onChange={e => setFormData({ ...formData, expiresAt: e.target.value })} style={{ padding: '10px 14px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#fff', fontSize: 14 }} />
                             </div>
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4 }}>

@@ -75,13 +75,13 @@ export default function AdminAnalyticsPage() {
         );
     }
 
-    const maxCatRev = Math.max(...data.categoryPerformance.map(c => c.revenue), 1);
+    const maxCatRev = Math.max(...(data.categoryPerformance || []).map(c => c.revenue), 1);
 
     const customerStats = [
-        { label: 'New Customers', value: data.customerStats.newCustomers.toLocaleString(), icon: Users, color: '#14b8a6', glow: 'rgba(20,184,166,0.15)' },
-        { label: 'Returning', value: data.customerStats.returningCustomers.toLocaleString(), icon: TrendingUp, color: '#a855f7', glow: 'rgba(168,85,247,0.15)' },
-        { label: 'Peak Hour', value: data.customerStats.peakHour, icon: Clock, color: '#fbbf24', glow: 'rgba(251,191,36,0.15)' },
-        { label: 'Top Customer LTV', value: `AED ${data.customerStats.topLTV.toLocaleString()}`, icon: Star, color: '#3b82f6', glow: 'rgba(59,130,246,0.15)' },
+        { label: 'New Customers', value: (data.customerStats?.newCustomers || 0).toLocaleString(), icon: Users, color: '#14b8a6', glow: 'rgba(20,184,166,0.15)' },
+        { label: 'Returning', value: (data.customerStats?.returningCustomers || 0).toLocaleString(), icon: TrendingUp, color: '#a855f7', glow: 'rgba(168,85,247,0.15)' },
+        { label: 'Peak Hour', value: data.customerStats?.peakHour || 'N/A', icon: Clock, color: '#fbbf24', glow: 'rgba(251,191,36,0.15)' },
+        { label: 'Top Customer LTV', value: `AED ${(data.customerStats?.topLTV || 0).toLocaleString()}`, icon: Star, color: '#3b82f6', glow: 'rgba(59,130,246,0.15)' },
     ];
 
     return (
@@ -162,13 +162,13 @@ export default function AdminAnalyticsPage() {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        {data.leastProducts.length === 0 ? (
+                        {(data.leastProducts || []).length === 0 ? (
                             <div style={{ textAlign: 'center', padding: '30px 0', color: 'rgba(255,255,255,0.15)', fontSize: 13 }}>No product data yet.</div>
-                        ) : data.leastProducts.map((p, i) => (
+                        ) : (data.leastProducts || []).map((p, i) => (
                             <div key={p.name} style={{
                                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                                 padding: '11px 0',
-                                borderBottom: i < data.leastProducts.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                                borderBottom: i < (data.leastProducts || []).length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                     <div style={{
@@ -231,12 +231,12 @@ export default function AdminAnalyticsPage() {
                     {/* New vs returning split bar */}
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 7 }}>
-                            <span style={{ fontSize: 11, color: '#14b8a6', fontWeight: 700 }}>New · {data.customerStats.newPct}%</span>
-                            <span style={{ fontSize: 11, color: '#a855f7', fontWeight: 700 }}>Returning · {data.customerStats.retPct}%</span>
+                            <span style={{ fontSize: 11, color: '#14b8a6', fontWeight: 700 }}>New · {data.customerStats?.newPct || 0}%</span>
+                            <span style={{ fontSize: 11, color: '#a855f7', fontWeight: 700 }}>Returning · {data.customerStats?.retPct || 0}%</span>
                         </div>
                         <div style={{ height: 5, borderRadius: 99, overflow: 'hidden', display: 'flex', background: 'rgba(255,255,255,0.05)' }}>
-                            <div style={{ width: `${data.customerStats.newPct}%`, background: '#14b8a6', boxShadow: '0 0 8px rgba(20,184,166,0.5)' }} />
-                            <div style={{ width: `${data.customerStats.retPct}%`, background: '#a855f7', boxShadow: '0 0 8px rgba(168,85,247,0.5)' }} />
+                            <div style={{ width: `${data.customerStats?.newPct || 0}%`, background: '#14b8a6', boxShadow: '0 0 8px rgba(20,184,166,0.5)' }} />
+                            <div style={{ width: `${data.customerStats?.retPct || 0}%`, background: '#a855f7', boxShadow: '0 0 8px rgba(168,85,247,0.5)' }} />
                         </div>
                     </div>
                 </div>
@@ -263,7 +263,7 @@ export default function AdminAnalyticsPage() {
                                     <span style={{ width: 46, fontSize: 11, color: 'rgba(255,255,255,0.3)', textAlign: 'right', flexShrink: 0, fontWeight: 600 }}>
                                         {day}
                                     </span>
-                                    {data.peakHoursHeatmap[day]?.map((val, hi) => (
+                                    {data.peakHoursHeatmap?.[day]?.map((val, hi) => (
                                         <div
                                             key={hi}
                                             title={`${day} ${HOURS[hi]}: intensity ${val}`}
@@ -306,9 +306,9 @@ export default function AdminAnalyticsPage() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
-                    {data.categoryPerformance.length === 0 ? (
+                    {(data.categoryPerformance || []).length === 0 ? (
                         <div style={{ textAlign: 'center', padding: '30px 0', color: 'rgba(255,255,255,0.15)', fontSize: 13 }}>No category data yet.</div>
-                    ) : data.categoryPerformance.map((c, i) => {
+                    ) : (data.categoryPerformance || []).map((c, i) => {
                         const pct = Math.round((c.revenue / maxCatRev) * 100);
                         return (
                             <div key={c.name} style={{

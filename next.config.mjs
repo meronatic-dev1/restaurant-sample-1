@@ -10,6 +10,13 @@ const nextConfig = {
     config.resolve.alias['@clerk/nextjs'] = path.resolve(__dirname, 'mocks/clerk.tsx');
     return config;
   },
+  experimental: {
+    turbo: {
+      resolveAlias: {
+        '@clerk/nextjs': './mocks/clerk.tsx',
+      },
+    },
+  },
 };
 
 export default nextConfig;

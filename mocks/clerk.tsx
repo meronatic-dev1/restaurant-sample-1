@@ -21,3 +21,4 @@ export const SignOutButton = ({ children, redirectUrl }: any) => {
 };
 
 export const ClerkProvider = ({ children }: any) => <>{children}</>;
+export const SignIn = () => <div style={{ color: '#fff', padding: 20, border: '1px dashed rgba(255,255,255,0.1)', borderRadius: 12, textAlign: 'center' }}>[Clerk SignIn Mock Component]</div>;
